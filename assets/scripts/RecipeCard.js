@@ -106,7 +106,7 @@ class RecipeCard extends HTMLElement {
       const main = document.querySelector("main")
       const newImg = document.createElement("img")
       newImg.src = searchForKey(data,"thumbnailUrl")
-      newImg.alt = searchForKey(data,"name")//
+      newImg.alt = searchForKey(data,"name")
       
 
       const p1 = document.createElement("p")
