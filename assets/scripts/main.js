@@ -5,7 +5,15 @@
 const recipes = [
   'https://introweb.tech/assets/json/ghostCookies.json',
   'https://introweb.tech/assets/json/birthdayCake.json',
-  'https://introweb.tech/assets/json/chocolateChip.json'
+  'https://introweb.tech/assets/json/chocolateChip.json',
+  'assets/recipes/Shrimp.json',
+  'assets/recipes/Chicken.json',
+  'assets/recipes/Beef.json'
+  
+  //"assets/recipes/Grandma's-Best-Pie.json",
+  //"assets/recipes/Non-alcoholic-Pina-Colada.json",
+  //"assets/recipes/Party-Coffe-Cake.json"
+
 ];
 
 // Once all of the recipes that were specified above have been fetched, their
@@ -24,6 +32,7 @@ async function init() {
     console.log('Recipe fetch unsuccessful');
     return;
   };
+  console.log(recipeData);
   // Add the first three recipe cards to the page
   createRecipeCards();
   // Make the "Show more" button functional
@@ -32,6 +41,20 @@ async function init() {
 
 async function fetchRecipes() {
   return new Promise((resolve, reject) => {
+    
+    recipes.map(ri => {
+      fetch(ri)
+          .then(response => response.json())
+          .then(data => {
+              recipeData[ri] = data;
+              if(Object.keys(recipeData).length === recipes.length) {
+                resolve(true);
+              }
+          })
+             .catch(err => reject(false));
+      });
+
+    
     // This function is called for you up above
     // From this function, you are going to fetch each of the recipes in the 'recipes' array above.
     // Once you have that data, store it in the 'recipeData' object. You can use whatever you like
@@ -47,6 +70,14 @@ async function fetchRecipes() {
 }
 
 function createRecipeCards() {
+  const mainTag = document.querySelector("main")
+  for(let i = 0; i < 3; ++i){
+     const newCard = document.createElement("recipe-card")
+     newCard.data = recipeData[Object.keys(recipeData)[i]];
+     mainTag.appendChild(newCard)
+  }
+
+
   // This function is called for you up above.
   // From within this function you can access the recipe data from the JSON 
   // files with the recipeData Object above. Make sure you only display the 
@@ -65,4 +96,26 @@ function bindShowMore() {
   // in the recipeData object where you stored them/
 
   // Part 2 Explore - TODO
+  const button = document.querySelector("button")
+  button.addEventListener("click", clickedButton)
+}
+
+function clickedButton(){
+  const button = document.querySelector("button")
+  var lessOrMore = button.innerText;
+  const main = document.querySelector("main")
+  if(lessOrMore == "Show more"){
+    for(var i = 3; i < recipes.length; ++i){
+      const recipeCard = document.createElement("recipe-card")
+      recipeCard.data = recipeData[Object.keys(recipeData)[i]]
+      main.appendChild(recipeCard)
+    }
+    button.innerText = "Show less"
+  }else{
+    var deleteNum = recipes.length - 3;
+    for(var i = 0; i < deleteNum; ++i){
+      main.removeChild(main.lastChild)
+    }
+    button.innerText = "Show more"
+  }
 }
